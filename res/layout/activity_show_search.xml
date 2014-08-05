@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<sandie.wino.view.NoDefaultSpinner
+	    android:id="@+id/wine_type_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="5dp"
+	    android:prompt="@string/wine_type" />
+
+	<sandie.wino.view.NoDefaultSpinner
+	    android:id="@+id/varietal_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="5dp"
+	    android:prompt="@string/wine_vartietal" />
+
+	<sandie.wino.view.NoDefaultSpinner
+	    android:id="@+id/wine_style_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="5dp"
+	    android:prompt="@string/wine_style" />
+
+	<sandie.wino.view.NoDefaultSpinner
+	    android:id="@+id/region_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="5dp"
+	    android:prompt="@string/wine_region" />
+
+	<sandie.wino.view.NoDefaultSpinner 
+	    android:id="@+id/apellation_spinner"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layout_margin="5dp"
+		android:prompt="@string/wine_appellation" />
+
+	<sandie.wino.view.NoDefaultSpinner
+	    android:id="@+id/vintage_spinner"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="5dp"
+	    android:prompt="@string/wine_vintage" />
+
+	<sandie.wino.view.NoDefaultSpinner android:id="@+id/food_type_spinner"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_margin="5dp" 
+		android:prompt="@string/food"/>
+
+	<Button
+	    android:id="@+id/searchWineBtn"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:enabled="false"
+	    android:text="@string/searchBtn" />
+
+</LinearLayout>

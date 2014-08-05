@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Wino</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+	<string name="show_search_activity_retrieving_data">Retrieving search parameters...</string>
+	<string name="show_search_activity_network_unavailable">No network connection, cannot retrieve data.</string>
+	<string name="searching">Searching for wine...</string>
+	<string name="wine_type">Wine type</string>
+	<string name="search_label">Choose search criteria</string>
+	<string name="wine_vintage">Wine vintage</string>
+	<string name="wine_vartietal">Wine varietal</string>
+	<string name="wine_style">Wine style</string>
+	<string name="wine_region">Wine region</string>
+	<string name="wine_appellation">Wine appellation</string>
+	<string name="food">Food</string>
+	<string name ="searchBtn">Search</string>
+</resources>
