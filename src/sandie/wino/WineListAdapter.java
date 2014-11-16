@@ -3,12 +3,9 @@ package sandie.wino;
 import java.util.List;
 
 import sandie.wino.tasks.ImageDownloadTask;
-
-
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +33,7 @@ public class WineListAdapter extends ArrayAdapter<sandie.wino.model.List> {
         TextView text = (TextView) convertView.findViewById(R.id.wine_name);
         ImageView image = (ImageView) convertView.findViewById(R.id.wine_img);
 
-        image.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),0));
+    //    image.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),0));
         sandie.wino.model.List item = getItem(position);
         if (item != null) {
             text.setText(item.getName());

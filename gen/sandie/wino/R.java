@@ -1078,6 +1078,10 @@ containing a value of this type.
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
         public static final int ic_launcher=0x7f020057;
+        public static final int ic_launcher2=0x7f020058;
+        public static final int ic_wine_medium=0x7f020059;
+        public static final int ic_wino=0x7f02005a;
+        public static final int wino_launcher=0x7f02005b;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1091,7 +1095,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050046;
+        public static final int action_settings=0x7f050048;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int apellation_spinner=0x7f050040;
@@ -1122,6 +1126,7 @@ containing a value of this type.
         public static final int progress_horizontal=0x7f050019;
         public static final int radio=0x7f05002f;
         public static final int region_spinner=0x7f05003f;
+        public static final int resetBtn=0x7f050044;
         public static final int searchWineBtn=0x7f050043;
         public static final int search_badge=0x7f050032;
         public static final int search_bar=0x7f050031;
@@ -1146,8 +1151,9 @@ containing a value of this type.
         public static final int useLogo=0x7f050003;
         public static final int varietal_spinner=0x7f05003d;
         public static final int vintage_spinner=0x7f050041;
-        public static final int wine_img=0x7f050044;
-        public static final int wine_name=0x7f050045;
+        public static final int wine_img=0x7f050046;
+        public static final int wine_list=0x7f050045;
+        public static final int wine_name=0x7f050047;
         public static final int wine_style_spinner=0x7f05003e;
         public static final int wine_type_spinner=0x7f05003c;
         public static final int withText=0x7f05000c;
@@ -1256,6 +1262,7 @@ containing a value of this type.
         public static final int app_name=0x7f0a000d;
         public static final int food=0x7f0a001a;
         public static final int hello_world=0x7f0a000e;
+        public static final int resetBtn=0x7f0a001c;
         public static final int searchBtn=0x7f0a001b;
         public static final int search_label=0x7f0a0014;
         public static final int searching=0x7f0a0012;

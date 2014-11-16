@@ -24,32 +24,27 @@ import org.apache.http.protocol.HttpContext;
 
 import sandie.wino.R;
 import sandie.wino.WinoApp;
-import sandie.wino.interfaces.OnTaskCompleted;
+import sandie.wino.fragment.GetSearchCriteriaFragment;
 import sandie.wino.model.Category;
 import sandie.wino.model.Refinement;
-import sandie.wino.tasks.GetSearchCategoriesTask;
 import sandie.wino.view.NoDefaultSpinner;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class ShowSearchOptionsActivity extends FragmentActivity implements TaskFragment.TaskCallbacks{
+public class ShowSearchOptionsActivity extends Activity implements GetSearchCriteriaFragment.TaskCallbacks{
 //public class ShowSearchOptionsActivity extends Activity implements OnTaskCompleted{
 	private static final AbstractHttpClient httpClient;
 	private static final String WINE_TYPE = "Wine Type";
@@ -59,13 +54,14 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 	private static final String VINTAGE = "Vintage";
 	private static final String FOOD_TYPE = "Food Type";
 	private static final String APPELLATION = "Appellation";
-	private TaskFragment mTaskFragment;
-	private static final String TAG_TASK_FRAGMENT = "task_fragment";
+	private GetSearchCriteriaFragment mCriteriaFragment;
+	private static final boolean DEBUG = true; 
+	private static final String TAG_TASK_FRAGMENT = GetSearchCriteriaFragment.class.getName() ;
 	
 	private NoDefaultSpinner wineTypeSpinner, varietalSpinner, wineStyleSpinner,
 	regionSpinner,vintageSpinner,foodSpinner, appellationSpinner;
 
-	private Button searchBtn;
+	private Button searchBtn, resetBtn;
 	
 	private ProgressDialog progressDialog;
 	private WinoApp app;
@@ -119,36 +115,38 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 	}
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
+		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCreate()");
+		// Start by showing the search options
 		setContentView(R.layout.activity_show_search);
-		    
+		
+		// Show a message that data is loading while the search filters are loading
 		progressDialog = new ProgressDialog(this);
 		progressDialog.setCancelable(false);
 		progressDialog.setMessage(getString(R.string.show_search_activity_retrieving_data));
 		progressDialog.show();
+		
 		// Use Application object for app wide state
 		app = (WinoApp) getApplication();
 		
 		FragmentManager fm = getFragmentManager();
-	    mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
+	    mCriteriaFragment = (GetSearchCriteriaFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
 	    // If the Fragment is non-null, then it is currently being
 	    // retained across a configuration change.
-	    if (mTaskFragment == null) {
-	      mTaskFragment = new TaskFragment();
-	      fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
+	    if (mCriteriaFragment == null) {
+	      mCriteriaFragment = new GetSearchCriteriaFragment();
+	      fm.beginTransaction().add(mCriteriaFragment, TAG_TASK_FRAGMENT).commit();
 	    }
 	
-		// get search category list (parsing if needed)
-		if (app.getSearchCategories().isEmpty()){
-			
+		// Get search category list (parsing if needed)
+		if (app.getSearchCategories().isEmpty()){			
 			if (app.connectionPresent()){
-				if (mTaskFragment.isRunning()) {
-			        mTaskFragment.cancel();
+				if (mCriteriaFragment.isRunning()) {
+			        mCriteriaFragment.cancel();
 			    } else {
-			    	mTaskFragment.start(app);
+			    	mCriteriaFragment.start(app);
 			    }
-			//	new GetSearchCategoriesTask(app, this).execute();
-				
 			}else{
 				Toast.makeText(this, getString(R.string.show_search_activity_network_unavailable), Toast.LENGTH_LONG).show();
 			}
@@ -164,21 +162,27 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 			
 			@Override
 			public void onClick(View v) {
-				String message = "";
+
 				if (selectedItems !=null){		
 					// Save the items to the app
 					app.setSelectedItems(selectedItems);
-					
-					for (Map.Entry<String, Integer> entry : selectedItems.entrySet()) { 
-						message = message + " " + entry.getKey() + " : " + entry.getValue().toString();
-					}
-					Toast.makeText(v.getContext(), message, Toast.LENGTH_LONG).show();
-					
+									
 					Intent searchResults = new Intent(ShowSearchOptionsActivity.this, ShowSearchResultsActivity.class);
 					startActivity(searchResults);
 				}				
 			}
 		} );
+		// Add click listener for the reset button
+		resetBtn = (Button) findViewById(R.id.resetBtn);
+		resetBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				searchBtn.setEnabled(false);
+				setUpDropdowns();
+				selectedItems = null;
+			}
+		});
 		
 	}
 
@@ -202,38 +206,12 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 		return super.onOptionsItemSelected(item);
 	}
 	
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_show_search,
-					container, false);
-			return rootView;
-		}
-	}
-
-//	@Override
-//	/**
-//	 * Async task has completed onPostExecute, search categories should be available
-//	 */
-//	public void callback() {
-//		if (progressDialog.isShowing()){
-//			progressDialog.cancel();
-//		}
-//		setUpDropdowns();
-//	}
 
 	/**
 	 * Set up drop downs for view
 	 */
 	protected void setUpDropdowns(){
+		
 		if (app.getSearchCategories()!=null & !app.getSearchCategories().isEmpty()){
 			
 			// Extract specific categories and populate appropriate spinners with refinements
@@ -288,8 +266,9 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 	        	 // Store a hash of spinner name to selected index
 	        	 if (selectedItems==null){
 	        		 selectedItems = new HashMap<String, Integer>();
-	        		 searchBtn.setEnabled(true);
+	        		 
 	        	 }
+	        	 searchBtn.setEnabled(true);
 	        	 String key = null;
 	        	 int spinnerId = parentView.getId();
 	        	 if (spinnerId ==wineStyleSpinner.getId()){
@@ -338,23 +317,28 @@ public class ShowSearchOptionsActivity extends FragmentActivity implements TaskF
 	@Override
 	public void onPreExecute() {
 		// TODO Auto-generated method stub
-		
+		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPreExecute()");
 	}
 
 	@Override
 	public void onProgressUpdate(int percent) {
 		// TODO Auto-generated method stub
-		
+		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onProgressUpdate()");
 	}
 
 	@Override
 	public void onCancelled() {
 		// TODO Auto-generated method stub
+		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCancelled()");
+		if (progressDialog.isShowing()){
+			progressDialog.dismiss();
+		}
 		
 	}
 
 	@Override
 	public void onPostExecute() {
+		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPostExecute()");
 		if (progressDialog.isShowing()){
 			progressDialog.cancel();
 		}
