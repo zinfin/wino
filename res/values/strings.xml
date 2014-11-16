@@ -16,4 +16,5 @@
 	<string name="wine_appellation">Wine appellation</string>
 	<string name="food">Food</string>
 	<string name ="searchBtn">Search</string>
+	<string name ="resetBtn">Reset</string>
 </resources>
