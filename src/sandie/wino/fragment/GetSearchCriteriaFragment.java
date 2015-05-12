@@ -52,15 +52,11 @@ public class GetSearchCriteriaFragment extends Fragment {
 	 */
 	@Override
 	public void onAttach(Activity activity) {
-		if (DEBUG) Log.i(TAG, "onAttach(Activity)");
 		super.onAttach(activity);
-		if (!(activity instanceof TaskCallbacks)) {
-			throw new IllegalStateException("Activity must implement the TaskCallbacks interface.");
-		}
-
 		// Hold a reference to the parent Activity so we can report back the task's
 		// current progress and results.
 		mCallbacks = (TaskCallbacks) activity;
+        _app = (WinoApp) activity.getApplication();
 	}
 
 	/**
@@ -68,58 +64,22 @@ public class GetSearchCriteriaFragment extends Fragment {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		if (DEBUG) Log.i(TAG, "onCreate(Bundle)");
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+        /* Create and execute the background task */
+        mTask = new LoadSearchCriteria(_app);
+        mTask.execute();
 	}
 
-	/**
-	 * Note that this method is <em>not</em> called when the Fragment is being
-	 * retained across Activity instances. It will, however, be called when its
-	 * parent Activity is being destroyed for good (such as when the user clicks
-	 * the back button, etc.).
-	 */
-	@Override
-	public void onDestroy() {
-		if (DEBUG) Log.i(TAG, "onDestroy()");
-		super.onDestroy();
-		cancel();
-	}
-
-	/*****************************/
-	/***** TASK FRAGMENT API *****/
-	/*****************************/
-
-	/**
-	 * Start the background task.
-	 */
-	public void start(Application app) {
-		_app = (WinoApp) app;
-		if (!mRunning) {
-			mTask = new LoadSearchCriteria(_app);
-			mTask.execute();
-			mRunning = true;
-		}
-	}
-
-	/**
-	 * Cancel the background task.
-	 */
-	public void cancel() {
-		if (mRunning) {
-			mTask.cancel(false);
-			mTask = null;
-			mRunning = false;
-		}
-	}
-
-	/**
-	 * Returns the current state of the background task.
-	 */
-	public boolean isRunning() {
-		return mRunning;
-	}
-
+    /**
+     * Set the callback to null so we don't accidentally leak the Activity
+     * instance.
+     */
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 	/***************************/
 	/***** BACKGROUND TASKS ****/
 	/***************************/
@@ -134,29 +94,30 @@ public class GetSearchCriteriaFragment extends Fragment {
 		private WinoApp _app;
 		
 		public LoadSearchCriteria(Application a){
-			_app =(WinoApp) a;
+            _app =(WinoApp) a;
 		}
-		@Override
-		protected void onPreExecute() {
-			// Proxy the call to the Activity.
-		//	mCallbacks.onPreExecute();
-			mRunning = true;
+        @Override
+        protected void onPreExecute() {
+            if (mCallbacks != null) {
+                mCallbacks.onPreExecute();
+            }
 		}
 
 		@Override
 		protected void onCancelled() {
 			// Proxy the call to the Activity.
-			//mCallbacks.onCancelled();
-			mRunning = false;
+            if (mCallbacks != null) {
+                mCallbacks.onCancelled();
+            }
 		}
 
 		@Override
 		protected void onPostExecute(List<Category> categories) {
-			mRunning = false;
 			_app.setSearchCategories(categories);
-			Log.d(WineConstants.LOG_TAG, "Doing async post execute for loading search criteria...");
 			// Proxy the call to the Activity
-			mCallbacks.onPostExecute();
+            if (mCallbacks != null) {
+                mCallbacks.onPostExecute();
+            }
 		}
 
 		@Override
@@ -193,31 +154,26 @@ public class GetSearchCriteriaFragment extends Fragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		if (DEBUG) Log.i(TAG, "onActivityCreated(Bundle)");
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public void onStart() {
-		if (DEBUG) Log.i(TAG, "onStart()");
 		super.onStart();
 	}
 
 	@Override
 	public void onResume() {
-		if (DEBUG) Log.i(TAG, "onResume()");
 		super.onResume();
 	}
 
 	@Override
 	public void onPause() {
-		if (DEBUG) Log.i(TAG, "onPause()");
 		super.onPause();
 	}
 
 	@Override
 	public void onStop() {
-		if (DEBUG) Log.i(TAG, "onStop()");
 		super.onStop();
 	}
 

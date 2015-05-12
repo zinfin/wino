@@ -19,60 +19,50 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
 		private ProgressDialog progressDialog;
 		private static final boolean DEBUG = true; 
 		private static final String TAG_TASK_FRAGMENT = RunSearchFragment.class.getName();
+        private static final String TAG = ShowSearchResultsActivity.class.getSimpleName();
 		private RunSearchFragment mSearchFragment;
-
-
 
 		@Override
 		public void onCreate(Bundle savedInstanceState){
-			if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCreate()");
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.result_list);		
 			
 			_app = (WinoApp) getApplication();
-			progressDialog = new ProgressDialog(this);
-			progressDialog.setCancelable(false);
-			progressDialog.setMessage(getString(R.string.searching));
-			progressDialog.show();
-			
-			FragmentManager fm = getFragmentManager();
-			mSearchFragment = (RunSearchFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
-		    // If the Fragment is non-null, then it is currently being
-		    // retained across a configuration change.
-		    if (mSearchFragment == null) {
-		    	mSearchFragment = new RunSearchFragment();
-		      fm.beginTransaction().add(mSearchFragment, TAG_TASK_FRAGMENT).commit();
-		    }
-			
-			if (mSearchFragment.isRunning()) {
-				mSearchFragment.cancel();
-				dismiss();
-		    } else {
-		    	mSearchFragment.start(_app);
-		    }
-			
-			// Execute search task (old way)
-			//new SearchWineTask(_app, this).execute();
+
+			if (_app.getSelectedItems()!=null){
+                FragmentManager fm = getFragmentManager();
+                mSearchFragment = (RunSearchFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
+                // If the Fragment is non-null, then it is currently being
+                // retained across a configuration change.
+                if (mSearchFragment == null) {
+                    mSearchFragment = new RunSearchFragment();
+                    fm.beginTransaction().add(mSearchFragment, TAG_TASK_FRAGMENT).commit();
+                }
+            }
+
+            Log.i(TAG, "ShowSearchResultsActivity: ON CREATE");
 			
 		}
-		private void dismiss(){
-			System.out.println("Dismiss function called");
-			if (progressDialog.isShowing()){
-				progressDialog.dismiss();
-			}
-		}
-		@Override 
+        /*
+        @Override
+        public void onResume(){
+            Log.i(TAG_TASK_FRAGMENT, "ShowSearchResultsActivity: ON RESUME");
+        }*/
+        private void dismissProgressDialog(){
+            if (progressDialog!=null && progressDialog.isShowing()){
+                progressDialog.cancel();
+            }
+        }
+		@Override
 		protected void onStop(){
 			super.onStop();
-			dismiss();
+			dismissProgressDialog();
+            Log.i(TAG, "ShowSearchResultsActivity: ON STOP");
 		}
 		private void showSearchResults(){
 			if (_app.getResults()!=null){
 				List<sandie.wino.model.List> results = _app.getResults();
-				for (sandie.wino.model.List item: results){
-					System.out.println(item.getName());
-				}
-
+                Log.i(TAG, "Results returned: "+results.size());
 				WineListAdapter wineListAdapter =
 						new WineListAdapter(this, R.layout.wine_search_results, results, _app);
 				
@@ -84,22 +74,21 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
 		}
 		@Override
 		public void onPreExecute() {
-			if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPreExecute()");
-			// TODO Auto-generated method stub
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage(getString(R.string.searching));
+            progressDialog.show();
 			
 		}
 
 		@Override
 		public void onProgressUpdate(int percent) {
-			if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onProgressUpdate()");
 			
 		}
 
 		@Override
 		public void onCancelled() {
-			if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCancelled()");
-			dismiss();
-			
+			dismissProgressDialog();
 		}
 		/**
 		 * When search task completes, this function is called
@@ -107,9 +96,8 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
 		 */
 		@Override
 		public void onPostExecute() {
-			if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPostExecute()");
-			// TODO Auto-generated method stub
-			dismiss();
-			showSearchResults();		
+            Log.i(TAG, "ShowSearchResultsActivity: ON POST EXECUTE");
+			dismissProgressDialog();
+			showSearchResults();
 		}
 }

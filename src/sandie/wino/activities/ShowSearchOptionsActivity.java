@@ -54,9 +54,9 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 	private static final String VINTAGE = "Vintage";
 	private static final String FOOD_TYPE = "Food Type";
 	private static final String APPELLATION = "Appellation";
-	private GetSearchCriteriaFragment mCriteriaFragment;
-	private static final boolean DEBUG = true; 
+    private static final boolean DEBUG = true;
 	private static final String TAG_TASK_FRAGMENT = GetSearchCriteriaFragment.class.getName() ;
+    private static final String CRITERIA_FRAGMENT = "criteria fragment";
 	
 	private NoDefaultSpinner wineTypeSpinner, varietalSpinner, wineStyleSpinner,
 	regionSpinner,vintageSpinner,foodSpinner, appellationSpinner;
@@ -66,6 +66,8 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 	private ProgressDialog progressDialog;
 	private WinoApp app;
 	private Map<String,Integer> selectedItems;
+    private FragmentManager mFragManager;
+    private GetSearchCriteriaFragment mCriteriaFragment;
 	
 	private static final HttpRequestRetryHandler retryHandler;
 
@@ -117,37 +119,27 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCreate()");
 		// Start by showing the search options
 		setContentView(R.layout.activity_show_search);
-		
-		// Show a message that data is loading while the search filters are loading
-		progressDialog = new ProgressDialog(this);
-		progressDialog.setCancelable(false);
-		progressDialog.setMessage(getString(R.string.show_search_activity_retrieving_data));
-		progressDialog.show();
+
+        // Set up progress dialogs showing a message that
+        // data is loading while the search filters are loading
+        mFragManager = getFragmentManager();
 		
 		// Use Application object for app wide state
 		app = (WinoApp) getApplication();
-		
-		FragmentManager fm = getFragmentManager();
-	    mCriteriaFragment = (GetSearchCriteriaFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
-	    // If the Fragment is non-null, then it is currently being
-	    // retained across a configuration change.
-	    if (mCriteriaFragment == null) {
-	      mCriteriaFragment = new GetSearchCriteriaFragment();
-	      fm.beginTransaction().add(mCriteriaFragment, TAG_TASK_FRAGMENT).commit();
-	    }
+
+        // Restore any bundle state
+        if (null != savedInstanceState) {
+            restoreState(savedInstanceState);
+        } else {
+            setUpFragments();
+        }
+
 	
 		// Get search category list (parsing if needed)
-		if (app.getSearchCategories().isEmpty()){			
-			if (app.connectionPresent()){
-				if (mCriteriaFragment.isRunning()) {
-			        mCriteriaFragment.cancel();
-			    } else {
-			    	mCriteriaFragment.start(app);
-			    }
-			}else{
+		if (app.getSearchCategories().isEmpty()){
+			if (!app.connectionPresent()){
 				Toast.makeText(this, getString(R.string.show_search_activity_network_unavailable), Toast.LENGTH_LONG).show();
 			}
 		}else{
@@ -163,7 +155,9 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 			@Override
 			public void onClick(View v) {
 
-				if (selectedItems !=null){		
+				if (selectedItems !=null){
+                    // Clear any results
+                    app.clearResultList();
 					// Save the items to the app
 					app.setSelectedItems(selectedItems);
 									
@@ -185,7 +179,17 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 		});
 		
 	}
-
+    private void setupProgressDialogs(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage(getString(R.string.show_search_activity_retrieving_data));
+        progressDialog.show();
+    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+        dismissProgressDialog();
+    }
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -200,19 +204,17 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
 	
 
 	/**
 	 * Set up drop downs for view
 	 */
-	protected void setUpDropdowns(){
-		
-		if (app.getSearchCategories()!=null & !app.getSearchCategories().isEmpty()){
+	public void setUpDropdowns(){
+        dismissProgressDialog();
+
+		if ((app.getSearchCategories() != null) & !app.getSearchCategories().isEmpty()){
 			
 			// Extract specific categories and populate appropriate spinners with refinements
 			for (Category category : app.getSearchCategories()){
@@ -316,33 +318,44 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 
 	@Override
 	public void onPreExecute() {
-		// TODO Auto-generated method stub
-		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPreExecute()");
 	}
 
 	@Override
 	public void onProgressUpdate(int percent) {
-		// TODO Auto-generated method stub
-		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onProgressUpdate()");
 	}
 
 	@Override
 	public void onCancelled() {
-		// TODO Auto-generated method stub
-		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onCancelled()");
-		if (progressDialog.isShowing()){
-			progressDialog.dismiss();
-		}
-		
+		dismissProgressDialog();
 	}
 
 	@Override
 	public void onPostExecute() {
-		if (DEBUG) Log.i(TAG_TASK_FRAGMENT, "onPostExecute()");
-		if (progressDialog.isShowing()){
-			progressDialog.cancel();
-		}
+		dismissProgressDialog();
 		setUpDropdowns();
-		
 	}
+    private void dismissProgressDialog(){
+        if (progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.cancel();
+        }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        if (null != mCriteriaFragment){
+            savedInstanceState.putString(CRITERIA_FRAGMENT,
+                    mCriteriaFragment.getTag());
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    private void restoreState(Bundle savedInstanceState){
+        //Fragments tags were saved in onSavedInstanceState
+        mCriteriaFragment = (GetSearchCriteriaFragment) mFragManager
+                .findFragmentByTag(savedInstanceState
+                        .getString(CRITERIA_FRAGMENT));
+    }
+    // One time setup of UI and retained (headless) Fragment
+    private void setUpFragments(){
+        mCriteriaFragment = new GetSearchCriteriaFragment();
+        mFragManager.beginTransaction().add(mCriteriaFragment, TAG_TASK_FRAGMENT).commit();
+    }
 }

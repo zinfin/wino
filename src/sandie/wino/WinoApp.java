@@ -82,7 +82,9 @@ public class WinoApp extends Application {
 	public void setSelectedItems(Map<String,Integer> selectedItems) {
 		this.selectedItems = selectedItems;
 	}
-
+    public void clearResultList(){
+        results.clear();
+    }
 	public int getResultSize() {
 		return resultSize;
 	}
