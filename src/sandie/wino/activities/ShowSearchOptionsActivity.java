@@ -22,13 +22,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
-import sandie.wino.R;
 import sandie.wino.WinoApp;
 import sandie.wino.fragment.GetSearchCriteriaFragment;
 import sandie.wino.model.Category;
 import sandie.wino.model.Refinement;
 import sandie.wino.view.NoDefaultSpinner;
-import android.app.Activity;
+import sandie.wino.R;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -44,17 +43,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class ShowSearchOptionsActivity extends Activity implements GetSearchCriteriaFragment.TaskCallbacks{
-//public class ShowSearchOptionsActivity extends Activity implements OnTaskCompleted{
+public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implements GetSearchCriteriaFragment.TaskCallbacks{
 	private static final AbstractHttpClient httpClient;
-	private static final String WINE_TYPE = "Wine Type";
-	private static final String VARIETAL = "Varietal";
-	private static final String WINE_STYLE= "Wine Style";
-	private static final String REGION = "REGION";
-	private static final String VINTAGE = "Vintage";
-	private static final String FOOD_TYPE = "Food Type";
-	private static final String APPELLATION = "Appellation";
-    private static final boolean DEBUG = true;
+
 	private static final String TAG_TASK_FRAGMENT = GetSearchCriteriaFragment.class.getName() ;
     private static final String CRITERIA_FRAGMENT = "criteria fragment";
 	
@@ -190,22 +181,9 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
         super.onStop();
         dismissProgressDialog();
     }
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.show_search, menu);
-		return true;
-	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
+
 	
 
 	/**
@@ -225,31 +203,31 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 //				}
 				// Sort
 				//Collections.sort(items);
-				if (category.getName().equalsIgnoreCase(WINE_TYPE)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_type))){
 					wineTypeSpinner=(NoDefaultSpinner) findViewById(R.id.wine_type_spinner);
 					assignSpinner(wineTypeSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(VARIETAL)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_vartietal))){
 					varietalSpinner=(NoDefaultSpinner) findViewById(R.id.varietal_spinner);
 					assignSpinner(varietalSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(WINE_STYLE)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_style))){
 					wineStyleSpinner=(NoDefaultSpinner) findViewById(R.id.wine_style_spinner);
 					assignSpinner(wineStyleSpinner, items);
 				}	
-				if (category.getName().equalsIgnoreCase(REGION)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_region))){
 					regionSpinner=(NoDefaultSpinner) findViewById(R.id.region_spinner);
 					assignSpinner(regionSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(VINTAGE)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_vintage))){
 					vintageSpinner=(NoDefaultSpinner) findViewById(R.id.vintage_spinner);
 					assignSpinner(vintageSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(FOOD_TYPE)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_food))){
 					foodSpinner=(NoDefaultSpinner) findViewById(R.id.food_type_spinner);
 					assignSpinner(foodSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(APPELLATION)){
+				if (category.getName().equalsIgnoreCase(getString(R.string.wine_appellation))){
 					appellationSpinner=(NoDefaultSpinner) findViewById(R.id.apellation_spinner);
 					assignSpinner(appellationSpinner, items);
 				}
@@ -274,20 +252,20 @@ public class ShowSearchOptionsActivity extends Activity implements GetSearchCrit
 	        	 String key = null;
 	        	 int spinnerId = parentView.getId();
 	        	 if (spinnerId ==wineStyleSpinner.getId()){
-	        		 key = WINE_STYLE;
+	        		 key = getString(R.string.wine_style);
 	        		 
 	        	 }if (spinnerId == wineTypeSpinner.getId()) {
-	        		 key = WINE_TYPE;
+	        		 key = getString(R.string.wine_type);
 	        	 }else if(spinnerId == regionSpinner.getId()){
-	        		 key = REGION;
+	        		 key = getString(R.string.wine_region);
 	        	 }else if (spinnerId == vintageSpinner.getId()){
-	        		 key = VINTAGE;
+	        		 key = getString(R.string.wine_vintage);
 	        	 }else if (spinnerId == foodSpinner.getId()){
-	        		 key = FOOD_TYPE;
+	        		 key = getString(R.string.wine_food);
 	        	 }else if (spinnerId == appellationSpinner.getId()){
-	        		 key = APPELLATION;
+	        		 key = getString(R.string.wine_appellation);
 	        	 }else if (spinnerId == varietalSpinner.getId()){
-	        		 key = VARIETAL;
+	        		 key = getString(R.string.wine_vartietal);
 	        	 }
 	        	 if (key!=null){
 	        		// Look up the associated id for this selected item

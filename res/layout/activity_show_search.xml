@@ -8,7 +8,7 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_margin="5dp"
-	    android:prompt="@string/wine_type" />
+	    android:prompt="@string/wine_type"/>
 
 	<sandie.wino.view.NoDefaultSpinner
 	    android:id="@+id/varietal_spinner"
@@ -48,7 +48,7 @@
 	<sandie.wino.view.NoDefaultSpinner android:id="@+id/food_type_spinner"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_margin="5dp" 
-		android:prompt="@string/food"/>
+		android:prompt="@string/wine_food"/>
 
 
 

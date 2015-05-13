@@ -3,6 +3,7 @@ package sandie.wino;
 import java.util.List;
 
 import sandie.wino.tasks.ImageDownloadTask;
+import sandie.wino.R;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;

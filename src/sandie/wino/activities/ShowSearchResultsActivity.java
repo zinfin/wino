@@ -6,20 +6,16 @@ import sandie.wino.R;
 import sandie.wino.WineListAdapter;
 import sandie.wino.WinoApp;
 import sandie.wino.fragment.RunSearchFragment;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 
-public class ShowSearchResultsActivity extends Activity implements RunSearchFragment.TaskCallbacks{
+public class ShowSearchResultsActivity extends LifecycleLoggingActivity implements RunSearchFragment.TaskCallbacks{
 
 		private WinoApp _app;
 		private ProgressDialog progressDialog;
-		private static final boolean DEBUG = true; 
 		private static final String TAG_TASK_FRAGMENT = RunSearchFragment.class.getName();
-        private static final String TAG = ShowSearchResultsActivity.class.getSimpleName();
 		private RunSearchFragment mSearchFragment;
 
 		@Override
@@ -40,7 +36,7 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
                 }
             }
 
-            Log.i(TAG, "ShowSearchResultsActivity: ON CREATE");
+
 			
 		}
         /*
@@ -57,12 +53,10 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
 		protected void onStop(){
 			super.onStop();
 			dismissProgressDialog();
-            Log.i(TAG, "ShowSearchResultsActivity: ON STOP");
 		}
 		private void showSearchResults(){
 			if (_app.getResults()!=null){
 				List<sandie.wino.model.List> results = _app.getResults();
-                Log.i(TAG, "Results returned: "+results.size());
 				WineListAdapter wineListAdapter =
 						new WineListAdapter(this, R.layout.wine_search_results, results, _app);
 				
@@ -96,7 +90,6 @@ public class ShowSearchResultsActivity extends Activity implements RunSearchFrag
 		 */
 		@Override
 		public void onPostExecute() {
-            Log.i(TAG, "ShowSearchResultsActivity: ON POST EXECUTE");
 			dismissProgressDialog();
 			showSearchResults();
 		}
