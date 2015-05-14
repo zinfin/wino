@@ -8,12 +8,12 @@
 	<string name="searching">Searching for wine</string>
 	<string name="wine_type">Wine type</string>
 	<string name="search_label">Choose search criteria</string>
-	<string name="wine_vintage">Wine vintage</string>
-	<string name="wine_vartietal">Wine varietal</string>
+	<string name="wine_vintage">Vintage</string>
+	<string name="wine_vartietal">Varietal</string>
 	<string name="wine_style">Wine style</string>
-	<string name="wine_region">Wine region</string>
-	<string name="wine_appellation">Wine appellation</string>
-	<string name="wine_food">Food</string>
+	<string name="wine_region">Region</string>
+	<string name="wine_appellation">Appellation</string>
+	<string name="wine_food">Food Type</string>
 	<string name ="searchBtn">Search</string>
 	<string name ="resetBtn">Reset</string>
 </resources>

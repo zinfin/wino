@@ -22,19 +22,17 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
+import sandie.wino.R;
 import sandie.wino.WinoApp;
 import sandie.wino.fragment.GetSearchCriteriaFragment;
 import sandie.wino.model.Category;
 import sandie.wino.model.Refinement;
 import sandie.wino.view.NoDefaultSpinner;
-import sandie.wino.R;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -62,6 +60,7 @@ public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implemen
 	
 	private static final HttpRequestRetryHandler retryHandler;
 
+   private final String TAG = getClass().getSimpleName();
 	static {
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", PlainSocketFactory
@@ -191,43 +190,45 @@ public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implemen
 	 */
 	public void setUpDropdowns(){
         dismissProgressDialog();
+        final String wType = getString(R.string.wine_type);
+        final String wVarietal = getString(R.string.wine_vartietal);
+        final String wStyle = getString(R.string.wine_style);
+        final String wRegion = getString(R.string.wine_region);
+        final String wVintage = getString(R.string.wine_vintage);
+        final String wFood = getString(R.string.wine_food);
+        final String wAppellation = getString(R.string.wine_appellation);
 
 		if ((app.getSearchCategories() != null) & !app.getSearchCategories().isEmpty()){
 			
 			// Extract specific categories and populate appropriate spinners with refinements
 			for (Category category : app.getSearchCategories()){
 				List<Refinement> items = category.getRefinements();
-//				List<String> items = new ArrayList<String>();
-//				for (Refinement r: refinements){
-//					items.add(r.getName());
-//				}
-				// Sort
-				//Collections.sort(items);
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_type))){
+				
+				if (category.getName().equalsIgnoreCase(wType)){
 					wineTypeSpinner=(NoDefaultSpinner) findViewById(R.id.wine_type_spinner);
 					assignSpinner(wineTypeSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_vartietal))){
+				if (category.getName().equalsIgnoreCase(wVarietal)){
 					varietalSpinner=(NoDefaultSpinner) findViewById(R.id.varietal_spinner);
 					assignSpinner(varietalSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_style))){
+				if (category.getName().equalsIgnoreCase(wStyle)){
 					wineStyleSpinner=(NoDefaultSpinner) findViewById(R.id.wine_style_spinner);
 					assignSpinner(wineStyleSpinner, items);
 				}	
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_region))){
+				if (category.getName().equalsIgnoreCase(wRegion)){
 					regionSpinner=(NoDefaultSpinner) findViewById(R.id.region_spinner);
 					assignSpinner(regionSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_vintage))){
+				if (category.getName().equalsIgnoreCase(wVintage)){
 					vintageSpinner=(NoDefaultSpinner) findViewById(R.id.vintage_spinner);
 					assignSpinner(vintageSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_food))){
+				if (category.getName().equalsIgnoreCase(wFood)){
 					foodSpinner=(NoDefaultSpinner) findViewById(R.id.food_type_spinner);
 					assignSpinner(foodSpinner, items);
 				}
-				if (category.getName().equalsIgnoreCase(getString(R.string.wine_appellation))){
+				if (category.getName().equalsIgnoreCase(wAppellation)){
 					appellationSpinner=(NoDefaultSpinner) findViewById(R.id.apellation_spinner);
 					assignSpinner(appellationSpinner, items);
 				}
