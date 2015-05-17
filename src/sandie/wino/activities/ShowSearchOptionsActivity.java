@@ -27,10 +27,13 @@ import sandie.wino.WinoApp;
 import sandie.wino.fragment.GetSearchCriteriaFragment;
 import sandie.wino.model.Category;
 import sandie.wino.model.Refinement;
+import sandie.wino.utils.WinoUtils;
 import sandie.wino.view.NoDefaultSpinner;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -57,6 +60,7 @@ public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implemen
 	private Map<String,Integer> selectedItems;
     private FragmentManager mFragManager;
     private GetSearchCriteriaFragment mCriteriaFragment;
+    public static String GET_SEARCH_CRITERIA = "android.intent.action.PROMPT_USER";
 	
 	private static final HttpRequestRetryHandler retryHandler;
 
@@ -125,48 +129,47 @@ public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implemen
         } else {
             setUpFragments();
         }
-
-	
-		// Get search category list (parsing if needed)
-		if (app.getSearchCategories().isEmpty()){
-			if (!app.connectionPresent()){
-				Toast.makeText(this, getString(R.string.show_search_activity_network_unavailable), Toast.LENGTH_LONG).show();
-			}
-		}else{
-			setUpDropdowns();
+        ConnectivityManager connMgr = (ConnectivityManager) 
+		        getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (!WinoUtils.isConnected(connMgr)){
+        	Toast.makeText(getApplicationContext(), R.string.show_search_activity_network_unavailable, Toast.LENGTH_SHORT).show();;
+        }else{
+        	setUpDropdowns();
 			if (progressDialog.isShowing()){
 				progressDialog.cancel();
 			}
-		}
-		// Add click listener to search button
-		searchBtn = (Button) findViewById(R.id.searchWineBtn);
-		searchBtn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
+			// Add click listener to search button
+			searchBtn = (Button) findViewById(R.id.searchWineBtn);
+			searchBtn.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
 
-				if (selectedItems !=null){
-                    // Clear any results
-                    app.clearResultList();
-					// Save the items to the app
-					app.setSelectedItems(selectedItems);
-									
-					Intent searchResults = new Intent(ShowSearchOptionsActivity.this, ShowSearchResultsActivity.class);
-					startActivity(searchResults);
-				}				
-			}
-		} );
-		// Add click listener for the reset button
-		resetBtn = (Button) findViewById(R.id.resetBtn);
-		resetBtn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				searchBtn.setEnabled(false);
-				setUpDropdowns();
-				selectedItems = null;
-			}
-		});
+					if (selectedItems !=null){
+	                    // Clear any results
+	                    app.clearResultList();
+						// Save the items to the app
+						app.setSelectedItems(selectedItems);
+										
+						Intent searchResults = new Intent(ShowSearchOptionsActivity.this, ShowSearchResultsActivity.class);
+						startActivity(searchResults);
+					}				
+				}
+			} );
+			// Add click listener for the reset button
+			resetBtn = (Button) findViewById(R.id.resetBtn);
+			resetBtn.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					searchBtn.setEnabled(false);
+					setUpDropdowns();
+					selectedItems = null;
+				}
+			});
+        }
+
+
 		
 	}
     private void setupProgressDialogs(){
@@ -181,9 +184,24 @@ public class ShowSearchOptionsActivity extends LifecycleLoggingActivity implemen
         dismissProgressDialog();
     }
 
-
-
-	
+    /**
+     * Download search options
+     */
+    public void downloadOptions(){
+    	// TODO surround with try catch
+    	// ImageUtils.setActivityResult(this, ....);
+    	// shutdown activity  finish();
+    }
+    /**
+     * Notify user back button was pressed
+     */
+	@Override
+	public void onBackPressed(){
+		Log.d(TAG, "back button pressed");
+		// Handle in activity result handler
+		// ImageUtils.setActivityResult(this, null, "back button pressed");
+		super.onBackPressed();
+	}
 
 	/**
 	 * Set up drop downs for view
