@@ -1,7 +1,8 @@
 package sandie.wino.strategy;
 
+import sandie.wino.WineConstants;
+import sandie.wino.activities.GetSearchOptionsActivity;
 import sandie.wino.activities.MainActivity;
-import sandie.wino.activities.ShowSearchOptionsActivity;
 import sandie.wino.strategy.DataStrategyManager.StrategyType;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,8 +19,12 @@ public class GetCategoryStrategy extends WineStrategy {
 	 * Run the strategy to download search options
 	 */
 	public void doRequest(Uri uri) {
+		Log.d(TAG,"doRequest() " + uri.toString());
+		String categoryURL = WineConstants.ENDPOINT+WineConstants.CATEGORY+WineConstants.API_KEY;
+		
 		// TODO Make intent download search options, passing ordinal for strategy
-		Intent intent = makeIntent(uri);
+		Uri url = Uri.parse(categoryURL);
+		Intent intent = makeIntent(url);
 		try{
 			mActivity.get().startActivityForResult(intent, StrategyType.DOWNLOAD_SEARCH_OPTIONS.ordinal());
 		}catch (NullPointerException npe){
@@ -28,15 +33,17 @@ public class GetCategoryStrategy extends WineStrategy {
 	}
 
 	public void doRequest(Intent data){
-		
+		Log.d(TAG,"doRequest() with Intent");
 	}
 	@Override
 	public void doRequest() {
-		// TODO Auto-generated method stub
+		
+		Log.d(TAG,"doRequest()");
 
 	}
 	@Override
 	public void doResult(Intent data) {
+		Log.d(TAG,"doResult()");
 		// TODO Auto-generated method stub, daisy chaining next strategy
 		//mActivity.get().doRequest(StrategyType.DOWNLOAD_SEARCH_OPTIONS, data.getData());
 	}
@@ -61,7 +68,7 @@ public class GetCategoryStrategy extends WineStrategy {
 	@Override
 	protected Intent makeIntent(Uri uri) {
 		// TODO Auto-generated method stub
-		return new Intent(ShowSearchOptionsActivity.GET_SEARCH_CRITERIA);
+		return new Intent(GetSearchOptionsActivity.ACTION_DOWNLOAD_SEARCH_OPTIONS);
 	}
 
 }

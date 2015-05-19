@@ -12,17 +12,22 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_wine_medium"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:name=".WinoApp">
         
-        <activity android:name="sandie.wino.activities.ShowSearchOptionsActivity">
+        <activity android:name="sandie.wino.activities.MainActivity">
             <intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
         </activity>
-        <activity android:name="sandie.wino.activities.ShowSearchResultsActivity"></activity>
+        <activity android:name="sandie.wino.activities.GetSearchOptionsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_SEARCH_OPTIONS" />
+            </intent-filter>
+        </activity>
+        <activity android:name="sandie.wino.activities.ShowSearchOptionsActivity"/>
     </application>
 
 </manifest>

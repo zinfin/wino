@@ -31,7 +31,7 @@ public class DataStrategyManager {
 	
 	public DataStrategyManager(MainActivity activity) {
 		// Load up the strategies
-		mStrategies[StrategyType.DOWNLOAD_SEARCH_OPTIONS.ordinal()]= new DownloadOptionsStrategy(activity);
+		mStrategies[StrategyType.DOWNLOAD_SEARCH_OPTIONS.ordinal()]= new GetCategoryStrategy(activity);
 		
 	}
 	/**
